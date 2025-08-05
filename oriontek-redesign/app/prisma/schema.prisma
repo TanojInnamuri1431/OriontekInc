@@ -1,0 +1,170 @@
+generator client {
+    provider = "prisma-client-js"
+    binaryTargets = ["native", "linux-musl-arm64-openssl-3.0.x"]
+    output = "/home/ubuntu/oriontek-redesign/app/node_modules/.prisma/client"
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+// NextAuth.js Models
+model Account {
+    id                String  @id @default(cuid())
+    userId            String
+    type              String
+    provider          String
+    providerAccountId String
+    refresh_token     String? @db.Text
+    access_token      String? @db.Text
+    expires_at        Int?
+    token_type        String?
+    scope             String?
+    id_token          String? @db.Text
+    session_state     String?
+
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@unique([provider, providerAccountId])
+    @@map("accounts")
+}
+
+model Session {
+    id           String   @id @default(cuid())
+    sessionToken String   @unique
+    userId       String
+    expires      DateTime
+    user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@map("sessions")
+}
+
+model User {
+    id            String    @id @default(cuid())
+    name          String?
+    email         String    @unique
+    password      String?   // For custom auth
+    emailVerified DateTime?
+    image         String?
+    role          String    @default("user") // user, admin, hr
+    isActive      Boolean   @default(true)
+    lastLogin     DateTime?
+    createdAt     DateTime  @default(now())
+    updatedAt     DateTime  @updatedAt
+    accounts      Account[]
+    sessions      Session[]
+
+    @@map("users")
+}
+
+model VerificationToken {
+    identifier String
+    token      String   @unique
+    expires    DateTime
+
+    @@unique([identifier, token])
+    @@map("verificationtokens")
+}
+
+// OTP System for HR Portal Authentication
+model OTPVerification {
+    id          String   @id @default(cuid())
+    identifier  String   // The password used ("Anil@oriontek" or "Subha@oriontek")
+    email       String   // The target email (ANIL@oriontekinc.com or subha@oriontekinc.com)
+    otp         String   // 6-digit OTP
+    purpose     String   // login, password_reset
+    verified    Boolean  @default(false)
+    attempts    Int      @default(0)
+    expiresAt   DateTime
+    createdAt   DateTime @default(now())
+    verifiedAt  DateTime?
+
+    @@map("otp_verifications")
+}
+
+// HR Portal Models
+model Employee {
+    id          String   @id @default(cuid())
+    employeeId  String   @unique
+    firstName   String
+    lastName    String
+    email       String   @unique
+    phone       String?
+    department  String
+    position    String
+    startDate   DateTime
+    endDate     DateTime?
+    status      String   @default("Active") // Active, Inactive, Terminated
+    salary      Float?
+    address     String?
+    city        String?
+    state       String?
+    country     String?
+    zipCode     String?
+    emergencyContact String?
+    emergencyPhone   String?
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+    
+    // Relations
+    documents   Document[]
+    timesheets  Timesheet[]
+    
+    @@map("employees")
+}
+
+model Document {
+    id          String   @id @default(cuid())
+    title       String
+    description String?
+    fileName    String
+    filePath    String
+    fileSize    Int
+    fileType    String
+    uploadDate  DateTime @default(now())
+    expiryDate  DateTime?
+    isExpired   Boolean  @default(false)
+    category    String   // Contract, Certificate, Policy, etc.
+    employeeId  String
+    uploadedBy  String
+    
+    // Relations
+    employee    Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+    
+    @@map("documents")
+}
+
+model Timesheet {
+    id          String   @id @default(cuid())
+    employeeId  String
+    date        DateTime
+    hoursWorked Float
+    description String?
+    project     String?
+    taskType    String?
+    status      String   @default("Pending") // Pending, Approved, Rejected
+    approvedBy  String?
+    approvedAt  DateTime?
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+    
+    // Relations
+    employee    Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+    
+    @@map("timesheets")
+}
+
+model Notification {
+    id          String   @id @default(cuid())
+    title       String
+    message     String
+    type        String   // Info, Warning, Error, Success
+    isRead      Boolean  @default(false)
+    targetId    String?  // Related entity ID (employee, document, etc.)
+    targetType  String?  // Related entity type
+    createdAt   DateTime @default(now())
+    readAt      DateTime?
+    
+    @@map("notifications")
+}

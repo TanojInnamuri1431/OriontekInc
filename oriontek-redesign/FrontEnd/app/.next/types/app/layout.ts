@@ -1,8 +1,8 @@
-// File: C:\Users\gnanu\Oriontek\Oriontek-Website\OriontekInc\oriontek-redesign\app\app\hr\login\page.tsx
-import * as entry from '../../../../../app/hr/login/page.js'
+// File: C:\Users\gnanu\Oriontek\Oriontek-Website\OriontekInc\oriontek-redesign\app\app\layout.tsx
+import * as entry from '../../../app/layout.jsx'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 
-type TEntry = typeof import('../../../../../app/hr/login/page.js')
+type TEntry = typeof import('../../../app/layout.jsx')
 
 // Check that the entry is a valid entry
 checkFields<Diff<{
@@ -16,26 +16,26 @@ checkFields<Diff<{
   preferredRegion?: 'auto' | 'global' | 'home' | string | string[]
   runtime?: 'nodejs' | 'experimental-edge' | 'edge'
   maxDuration?: number
-  
+
   metadata?: any
   generateMetadata?: Function
   viewport?: any
   generateViewport?: Function
-  
+
 }, TEntry, ''>>()
 
 // Check the prop type of the entry function
-checkFields<Diff<PageProps, FirstArg<TEntry['default']>, 'default'>>()
+checkFields<Diff<LayoutProps, FirstArg<TEntry['default']>, 'default'>>()
 
 // Check the arguments and return type of the generateMetadata function
 if ('generateMetadata' in entry) {
-  checkFields<Diff<PageProps, FirstArg<MaybeField<TEntry, 'generateMetadata'>>, 'generateMetadata'>>()
+  checkFields<Diff<LayoutProps, FirstArg<MaybeField<TEntry, 'generateMetadata'>>, 'generateMetadata'>>()
   checkFields<Diff<ResolvingMetadata, SecondArg<MaybeField<TEntry, 'generateMetadata'>>, 'generateMetadata'>>()
 }
 
 // Check the arguments and return type of the generateViewport function
 if ('generateViewport' in entry) {
-  checkFields<Diff<PageProps, FirstArg<MaybeField<TEntry, 'generateViewport'>>, 'generateViewport'>>()
+  checkFields<Diff<LayoutProps, FirstArg<MaybeField<TEntry, 'generateViewport'>>, 'generateViewport'>>()
   checkFields<Diff<ResolvingViewport, SecondArg<MaybeField<TEntry, 'generateViewport'>>, 'generateViewport'>>()
 }
 

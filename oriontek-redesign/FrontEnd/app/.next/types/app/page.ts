@@ -1,8 +1,8 @@
-// File: C:\Users\gnanu\Oriontek\Oriontek-Website\OriontekInc\oriontek-redesign\app\app\page.tsx
-import * as entry from '../../../app/page.jsx'
+// File: C:\Users\gnanu\Oriontek\Oriontek-Website\OriontekInc\oriontek-redesign\FrontEnd\app\app\page.tsx
+import * as entry from '../../../app/page.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 
-type TEntry = typeof import('../../../app/page.jsx')
+type TEntry = typeof import('../../../app/page.js')
 
 // Check that the entry is a valid entry
 checkFields<Diff<{
@@ -16,12 +16,12 @@ checkFields<Diff<{
   preferredRegion?: 'auto' | 'global' | 'home' | string | string[]
   runtime?: 'nodejs' | 'experimental-edge' | 'edge'
   maxDuration?: number
-
+  
   metadata?: any
   generateMetadata?: Function
   viewport?: any
   generateViewport?: Function
-
+  
 }, TEntry, ''>>()
 
 // Check the prop type of the entry function
